@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class RedditCloneServerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(RedditCloneServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(RedditCloneServerApplication.class, args);
+    }
 
 }

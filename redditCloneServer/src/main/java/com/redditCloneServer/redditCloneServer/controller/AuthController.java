@@ -1,5 +1,7 @@
 package com.redditCloneServer.redditCloneServer.controller;
 
+import com.redditCloneServer.redditCloneServer.dto.AuthenticationToken;
+import com.redditCloneServer.redditCloneServer.dto.LoginRequest;
 import com.redditCloneServer.redditCloneServer.dto.RegisterRequest;
 import com.redditCloneServer.redditCloneServer.service.AuthService;
 import lombok.AllArgsConstructor;
@@ -16,36 +18,41 @@ public class AuthController {
 
 
     @GetMapping("/hello")
-    public ResponseEntity<String> hello(){
+    public ResponseEntity<String> hello() {
         try {
             return new ResponseEntity<>("Hello World", HttpStatus.OK);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody RegisterRequest registerRequest){
+    public ResponseEntity<String> signup(@RequestBody RegisterRequest registerRequest) {
         try {
             authService.signup(registerRequest);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    return new ResponseEntity<>("User Register successful", HttpStatus.OK);
+        return new ResponseEntity<>("User Register successful", HttpStatus.OK);
     }
 
 
     @GetMapping("/accountVerification/{token}")
-    public ResponseEntity<String> verifyAccount(@PathVariable String token){
+    public ResponseEntity<String> verifyAccount(@PathVariable String token) {
+        try {
+            authService.verifyAccount(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("Account activated Successfully", HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationToken> login(@RequestBody LoginRequest loginRequest){
         try{
-        authService.verifyAccount(token);
-    }catch (Exception e){
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return authService.login(loginRequest);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-        return new ResponseEntity<>("Account activated Successfully",HttpStatus.OK);
-    }
-
-
-
-
 }
