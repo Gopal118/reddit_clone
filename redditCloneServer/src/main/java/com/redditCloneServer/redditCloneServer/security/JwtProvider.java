@@ -3,6 +3,7 @@ package com.redditCloneServer.redditCloneServer.security;
 import com.redditCloneServer.redditCloneServer.exception.SpringRedditException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.security.cert.CertificateException;
 import static io.jsonwebtoken.Jwts.parser;
 
 @Service
+@Slf4j
 public class JwtProvider {
 //    @Value("${jwt.secret}")
 //    private String SECRET_KEY ;
@@ -68,35 +70,38 @@ public class JwtProvider {
 //    }
 
 
-    private KeyStore keystore;
+    private KeyStore keyStore;
 
     @PostConstruct
     public void init() {
         try {
-            keystore = KeyStore.getInstance("JKS");
-            InputStream resourceAsStream = getClass().getResourceAsStream("/spingblog1.jks");
-            keystore.load(resourceAsStream, "secret".toCharArray());
+            keyStore = KeyStore.getInstance("JKS");
+            InputStream resourceAsStream = getClass().getResourceAsStream("/springblog1.jks");
+            keyStore.load(resourceAsStream, "qwerty".toCharArray());
+//            log.info("load the key"+keyStore);
+//            log.info("private key "+keyStore.getKey("springblog1", "qwerty".toCharArray()));
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
-            e.printStackTrace();
-            throw new SpringRedditException("Exception occurred while loading the keystore");
+            throw new SpringRedditException("Exception occurred while loading keystore");
         }
+
     }
 
     public String generateToken(Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
 
+        log.info("private key"+getPrivateKey());
         return Jwts.builder()
                 .setSubject(principal.getUsername())
                 .signWith(getPrivateKey())
                 .compact();
     }
 
+
     private PrivateKey getPrivateKey() {
         try {
-            return (PrivateKey) keystore.getKey("springblog1", "secret".toCharArray());
-        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException e) {
-            e.printStackTrace();
-            throw new SpringRedditException("Exception occurred while retrieving public key from keystore");
+            return (PrivateKey) keyStore.getKey("springblog1", "qwerty".toCharArray());
+        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+            throw new SpringRedditException("Exception occured while retrieving public key from keystore");
         }
     }
 
@@ -107,7 +112,7 @@ public class JwtProvider {
 
     private PublicKey getPublicKey() {
     try{
-        return keystore.getCertificate("springblog1").getPublicKey();
+        return keyStore.getCertificate("springblog1").getPublicKey();
     } catch (KeyStoreException e) {
         e.printStackTrace();
         throw new SpringRedditException("Exception occurred while retrieving public key from keystore");

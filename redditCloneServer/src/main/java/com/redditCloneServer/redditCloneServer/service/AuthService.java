@@ -85,12 +85,19 @@ public class AuthService {
 
 
     public ResponseEntity<AuthenticationToken> login(LoginRequest loginRequest) {
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
-        String token = jwtProvider.generateToken(authenticate);
         AuthenticationToken authenticationToken = new AuthenticationToken();
-        authenticationToken.setAuthentication(token);
-        authenticationToken.setUsername(loginRequest.getUsername());
+        try {
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authenticate);
+            String token = jwtProvider.generateToken(authenticate);
+
+            authenticationToken.setAuthentication(token);
+            authenticationToken.setUsername(loginRequest.getUsername());
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return new ResponseEntity<AuthenticationToken>(authenticationToken, HttpStatus.OK);
     }
 }
