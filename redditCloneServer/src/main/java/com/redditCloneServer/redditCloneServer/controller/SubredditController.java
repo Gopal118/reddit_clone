@@ -27,9 +27,19 @@ public class SubredditController {
     }
 
     @GetMapping
-    public ResponseEntity getAllSubreddit(){
+    public ResponseEntity getAllSubreddits(){
         try {
          return  ResponseEntity.status(HttpStatus.OK).body(subredditService.getALlSubreddit());
+        }catch (Exception e){
+            e.printStackTrace();
+            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity getSubreddit(@PathVariable Long id){
+        try {
+            return  ResponseEntity.status(HttpStatus.OK).body(subredditService.getSubreddit(id));
         }catch (Exception e){
             e.printStackTrace();
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
