@@ -10,6 +10,7 @@ import com.redditCloneServer.redditCloneServer.model.VerificationToken;
 import com.redditCloneServer.redditCloneServer.repository.UserRepository;
 import com.redditCloneServer.redditCloneServer.repository.VerificationTokenRepository;
 import com.redditCloneServer.redditCloneServer.security.JwtProvider;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,4 +102,12 @@ public class AuthService {
         }
         return new ResponseEntity<AuthenticationToken>(authenticationToken, HttpStatus.OK);
     }
+
+    @Transactional(readOnly = true)
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + authentication.getName()));
+    }
+
 }

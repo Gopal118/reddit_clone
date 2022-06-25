@@ -10,18 +10,19 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-
 @Mapper(componentModel = "spring")
 public interface SubredditMapper {
 
-    @Mapping(target = "numberOfPosts", expression = "java(mapPosts(subreddit.getPosts()))")
-    SubredditDto mapSubredditToDto(Subreddit subreddit);
+  @Mapping(target = "numberOfPosts", expression = "java(mapPosts(subreddit.getPosts()))")
+  SubredditDto mapSubredditToDto(Subreddit subreddit);
 
-    default Integer mapPosts(List<Post> numberOfPosts) {
-        return numberOfPosts.size();
-    }
+  default Integer mapPosts(List<Post> numberOfPosts) {
+    return numberOfPosts.size();
+  }
 
-    @InheritInverseConfiguration
-    @Mapping(target = "posts", ignore = true)
-    Subreddit mapDtoToSubreddit(SubredditDto subredditDto);
+  @InheritInverseConfiguration
+  @Mapping(target = "posts", ignore = true)
+  Subreddit mapDtoToSubreddit(SubredditDto subredditDto);
+
+
 }
